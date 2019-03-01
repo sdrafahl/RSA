@@ -4,13 +4,15 @@ import (
 	"math"
 )
 
-func gen() (int, int) {
+func gen() (PrivatKey, PublicKey) {
 	p, q := twoPrimes(10)
 	n := p * q
 	totient := (p - 1) * (q - 1)
 	e := find_e(totient)
 	d := computeD(totient, e)
-	return n, d
+	var privateKey PrivatKey = PrivatKey{p, q, totient, d}
+	var publicKey PublicKey = PublicKey{n, e}
+	return privateKey, publicKey
 }
 
 func find_e(totient int) int {
@@ -43,10 +45,10 @@ func getFactor(factor int, polymer Polynomial, polymers []Polynomial, totient in
 		}
 	}
 	d := factorValue1 + factorValue2
-	if d > 0 {
+	if d < 0 {
 		return int(totient - int(math.Abs(float64(d))))
 	} else {
-		return totient
+		return d
 	}
 }
 
@@ -89,4 +91,16 @@ type Polynomial struct {
 	factor1   int
 	factor2   int
 	remainder int
+}
+
+type PrivatKey struct {
+	p       int
+	q       int
+	totient int
+	d       int
+}
+
+type PublicKey struct {
+	n int
+	e int
 }

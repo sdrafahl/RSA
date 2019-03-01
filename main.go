@@ -3,6 +3,9 @@ package main
 import "fmt"
 
 func main() {
-	i, a := gen()
-	fmt.Printf("key %d %d\n", i, a)
+	n, d := gen()
+	fmt.Println("Private Key")
+	fmt.Println(n)
+	fmt.Println("Public Key")
+	fmt.Println(d)
 }
