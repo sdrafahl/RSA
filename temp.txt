@@ -1,0 +1,14 @@
+not null
+183 factor2
+Polymer
+{3120 17 183 9}
+  Value 1
+  0
+  Value 2
+  -183
+factorValue2
+33489
+Value 2
+33489
+factorValue2
+-33490

@@ -1,16 +1,20 @@
 package main
 
 import (
+	"fmt"
 	"math"
 )
 
 func gen() (PrivatKey, PublicKey) {
-	p, q := twoPrimes(10)
+	//p, q := twoPrimes(10)
+	p := 61
+	q := 53
 	n := p * q
 	totient := (p - 1) * (q - 1)
-	e := find_e(totient)
+	//e := find_e(totient)
+	e := 17
 	d := computeD(totient, e)
-	var privateKey PrivatKey = PrivatKey{p, q, totient, d}
+	var privateKey PrivatKey = PrivatKey{p, q, totient, d, n}
 	var publicKey PublicKey = PublicKey{n, e}
 	return privateKey, publicKey
 }
@@ -30,32 +34,31 @@ func getFactor(factor int, polymer Polynomial, polymers []Polynomial, totient in
 	if polymer.answer == factor {
 		factorValue1 = 1
 	} else {
-		var polymer *Polynomial = searchPolynomials(factor, polymers)
-		if polymer != nil {
-			factorValue1 = getFactor(factor, *polymer, polymers, totient)
+		var searchedPolymer *Polynomial = searchPolynomials(polymer.answer, polymers)
+		if searchedPolymer != nil {
+			factorValue1 = getFactor(factor, *searchedPolymer, polymers, totient)
 		}
 	}
 	var factorValue2 int = 0
 	if polymer.factor1 == factor {
 		factorValue2 = polymer.factor2 * -1
 	} else {
-		var polymer *Polynomial = searchPolynomials(factor, polymers)
-		if polymer != nil {
-			factorValue2 = getFactor(factor, *polymer, polymers, totient) * polymer.factor2 * -1
+		var searchedPolymer *Polynomial = searchPolynomials(polymer.factor1, polymers)
+		if searchedPolymer != nil {
+			factorValue2 = getFactor(factor, *searchedPolymer, polymers, totient) * polymer.factor2 * -1
 		}
 	}
-	d := factorValue1 + factorValue2
-	if d < 0 {
-		return int(totient - int(math.Abs(float64(d))))
-	} else {
-		return d
-	}
+	//fmt.Println("total")
+	//fmt.Println(polymer)
+	//fmt.Println(factorValue1)
+	//fmt.Println(factorValue2)
+	//fmt.Println(factorValue1 + factorValue2)
+	return factorValue1 + factorValue2
 }
 
 func searchPolynomials(remainder int, polynomials []Polynomial) *Polynomial {
-	for i, s := range polynomials {
+	for _, s := range polynomials {
 		if s.remainder == remainder {
-			i++
 			return &s
 		}
 	}
@@ -83,6 +86,12 @@ func computeD(totient int, e int) int {
 	}
 	var polyNomial Polynomial = (polys[incrament-1 : incrament])[0]
 	var d int = getFactor(e, polyNomial, polys, totient)
+	fmt.Println("d:")
+	fmt.Println(d)
+
+	if d < 0 {
+		return totient + d
+	}
 	return d
 }
 
@@ -98,6 +107,7 @@ type PrivatKey struct {
 	q       int
 	totient int
 	d       int
+	n       int
 }
 
 type PublicKey struct {
